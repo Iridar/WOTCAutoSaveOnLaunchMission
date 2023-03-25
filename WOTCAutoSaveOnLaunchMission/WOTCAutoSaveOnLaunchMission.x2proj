@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Guid>f5ecc673-96bc-45d4-91f3-9eb6a2383e7d</Guid>
+    <Name>WOTCAutoSaveOnLaunchMission</Name>
+    <Description>Automatically creates a quick save when you click the "Launch Mission" button.
+
+tags= war of the chosen</Description>
+    <SteamPublishID>0</SteamPublishID>
+    <AssemblyName>WOTCAutoSaveOnLaunchMission</AssemblyName>
+    <RootNamespace>WOTCAutoSaveOnLaunchMission</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Src\" />
+    <Folder Include="Src\WOTCAutoSaveOnLaunchMission\" />
+    <Folder Include="Src\WOTCAutoSaveOnLaunchMission\Classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ReadMe.txt" />
+    <Content Include="ModPreview.jpg" />
+    <Content Include="Config\XComEditor.ini" />
+    <Content Include="Config\XComEngine.ini" />
+    <Content Include="Src\WOTCAutoSaveOnLaunchMission\Classes\UIPanel_SOL_Dummy.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCAutoSaveOnLaunchMission\Classes\UISL_SaveOnLaunch.uc">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
+</Project>
