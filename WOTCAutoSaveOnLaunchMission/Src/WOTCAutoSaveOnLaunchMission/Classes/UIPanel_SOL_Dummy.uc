@@ -8,6 +8,7 @@ final function OnLaunchMission(UIButton Button)
 {
 	local GeneratedMissionData				MissionData;
 	local XComGameState_HeadquartersXCom	XComHQ;
+	local UISquadSelect						SquadSelect;
 
 	// Make the Auto Save use the same name as the mission name.
 	XComHQ = `XCOMHQ;
@@ -28,7 +29,20 @@ final function OnLaunchMission(UIButton Button)
 		`AUTOSAVEMGR.DoAutosave(/*AutoSaveCompleteCallback*/, /*bDebugSave*/, true /*bPreMissionSave*/, /*bPostMissionSave*/, /*PartialHistoryLength*/);
 	}
 	
-	OnClickedOriginal(Button);
+	`LOG("Running:" @ string(OnClickedOriginal),, 'WOTCAutoSaveOnLaunchMission');
+
+	if (OnClickedOriginal != none)
+	{
+		OnClickedOriginal(Button);
+	}
+
+	SquadSelect = UISquadSelect(Movie.Pres.ScreenStack.GetFirstInstanceOf(class'UISquadSelect'));
+	if (SquadSelect != none && SquadSelect.bLaunched)
+	{
+		`LOG("Mission launched, clearing delegate and removing panel.",, 'MissionLaunchAutoSave');
+		OnClickedOriginal = none;
+		Remove();
+	}
 }
 
 private function bool CannotBackOutSquadSelect(const int MissionID)
@@ -47,4 +61,11 @@ private function bool CannotBackOutSquadSelect(const int MissionID)
 		}
 	}
 	return MissionSourceTemplate != none && MissionSourceTemplate.bCannotBackOutSquadSelect;
+}
+
+simulated event Removed()
+{
+	`LOG("Dummy panel removed.",, 'MissionLaunchAutoSave');
+	OnClickedOriginal = none;
+	super.Removed();
 }

@@ -23,16 +23,18 @@ event OnInit(UIScreen Screen)
 		// since it would cause garbage collection crashes.
 		DummyPanel = SquadSelect.LaunchButton.Spawn(class'UIPanel_SOL_Dummy', SquadSelect.LaunchButton);
 		DummyPanel.InitPanel('IRI_SOL_DummyPanel');
-		DummyPanel.OnClickedOriginal = SquadSelect.LaunchButton.OnClickedDelegate;
 		DummyPanel.Hide();
 		DummyPanel.SetPosition(-100, -100);
 
+		`LOG("Replacing:" @ string(SquadSelect.LaunchButton.OnClickedDelegate) @ "with" @ string(DummyPanel.OnLaunchMission),, 'WOTCAutoSaveOnLaunchMission');
+
+		DummyPanel.OnClickedOriginal = SquadSelect.LaunchButton.OnClickedDelegate;
 		SquadSelect.LaunchButton.OnClickedDelegate = DummyPanel.OnLaunchMission;
 	}
 	else
 	{
 		TacticalHUD = UITacticalHud(Screen);
-		if (TacticalHUD != none)
+		if (TacticalHUD != none && IsIronman())
 		{
 			TacticalHUD.Movie.Stack.SubscribeToOnInputForScreen(TacticalHUD, OnTacticalHUDInput);
 		}
@@ -42,22 +44,37 @@ event OnInit(UIScreen Screen)
 // If Ironman is enabled, then hitting F5 will manually AutoSave the game.
 private function bool OnTacticalHUDInput(UIScreen Screen, int iInput, int ActionMask)
 {
-	
+	local UIProgressDialogue Progress;
+
 	// Ignore releases, just pay attention to presses.
 	if ( ( ActionMask & class'UIUtilities_Input'.const.FXS_ACTION_PRESS) == 0 )
 		return false;
 
 	// Docs for this:
 	// https://x2communitycore.github.io/X2WOTCCommunityHighlander/misc/SubscribeToOnInputForScreen/
-
 	
-	if (IsIronman() && iInput == class'UIUtilities_Input'.const.FXS_KEY_F5)
+	if (iInput == class'UIUtilities_Input'.const.FXS_KEY_F5)
 	{
+		Progress = Screen.Movie.Pres.Spawn(class'UIProgressDialogue');
+		Progress.m_kData.strTitle =  class'XComKeybindingData'.default.m_arrGeneralBindableLabels[eGBC_QuickSave]; // "Quick Save"
+		Progress.m_kData.strDescription = class'UISaveGame'.default.m_sSavingInProgressPS3; // "Saving content..."
+		Screen.Movie.Stack.Push(Progress);
+
 		`LOG("Performing manual Ironman Auto Save.",, 'MissionLaunchAutoSave');
-		`AUTOSAVEMGR.DoAutosave(/*AutoSaveCompleteCallback*/, /*bDebugSave*/, false /*bPreMissionSave*/, /*bPostMissionSave*/, /*PartialHistoryLength*/);
+		`AUTOSAVEMGR.DoAutosave(OnAutoSaveCompleted, /*bDebugSave*/, false /*bPreMissionSave*/, /*bPostMissionSave*/, /*PartialHistoryLength*/);
 	}
 
     return false;
+}
+
+private function OnAutoSaveCompleted(bool bWasSuccessful)
+{
+	`SCREENSTACK.PopFirstInstanceOfClass(class'UIProgressDialogue', false);
+	`LOG("Quick Save Completed" @ bWasSuccessful,, 'MissionLaunchAutoSave');
+
+	
+	//class'UISaveGame'.default.m_sSaveFailedTitle="SAVE FAILED"
+	//class'UISaveGame'.default.m_sSaveFailedText="Failed to write save file"
 }
 
 private function bool IsIronman()

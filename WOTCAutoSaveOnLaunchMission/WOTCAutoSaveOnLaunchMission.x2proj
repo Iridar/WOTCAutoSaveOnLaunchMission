@@ -18,6 +18,9 @@ tags= war of the chosen</Description>
     <Folder Include="Src\WOTCAutoSaveOnLaunchMission\Classes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\XComAutoSave.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
     <Content Include="Config\XComEditor.ini" />
@@ -26,6 +29,9 @@ tags= war of the chosen</Description>
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTCAutoSaveOnLaunchMission\Classes\UISL_SaveOnLaunch.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCAutoSaveOnLaunchMission\Classes\X2EventListener_SOL.uc">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
